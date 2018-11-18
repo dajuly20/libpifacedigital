@@ -1,17 +1,17 @@
-PROJECT=pifacedigital
-SOURCES=src/pifacedigital.c
+PROJECT=pifacedigitalcpp
+SOURCES=src/pifacedigitalcpp.cpp
 LIBRARY=static
 INCPATHS=../libmcp23s17/src/
 LIBPATHS=../libmcp23s17/
 LDFLAGS=
 CFLAGS=-c -Wall
-CC=gcc
+CC=g++
 SWIG=swig
 
 # ------------ MAGIC BEGINS HERE -------------
 
 # Automatic generation of some important lists
-OBJECTS=$(SOURCES:.c=.o)
+OBJECTS=$(SOURCES:.cpp=.o)
 INCFLAGS=$(foreach TMP,$(INCPATHS),-I$(TMP))
 LIBFLAGS=$(foreach TMP,$(LIBPATHS),-L$(TMP))
 
@@ -35,26 +35,26 @@ $(BINARY): $(OBJECTS)
 	$(CC) $(LIBFLAGS) $(OBJECTS) $(LDFLAGS) -o $@
     endif
 
-.c.o:
+.cpp.o:
 	$(CC) $(INCFLAGS) $(CFLAGS) -fPIC $< -o $@
 
 distclean: clean
 	rm -f $(BINARY)
 
-example: example.c
-	gcc -o example example.c -Isrc/ -L. -lpifacedigital -L../libmcp23s17/ -lmcp23s17
+example: example.cpp
+	g++ -o example example.cpp -x c++ -Isrc/ -L. -lpifacedigitalcpp -L../libmcp23s17/ -lmcp23s17  
 
-pifacedigital: util/pifacedigital-cmd.c
-	gcc -o pifacedigital util/pifacedigital-cmd.c -Isrc/ -I../libmcp23s17/src/ -L. -lpifacedigital -L../libmcp23s17/ -lmcp23s17
+#pifacedigital: util/pifacedigital-cmd.c
+#	gcc -o pifacedigital util/pifacedigital-cmd.c -Isrc/ -I../libmcp23s17/src/ -L. -lpifacedigital -L../libmcp23s17/ -lmcp23s17
 
 clean:
 	rm -f $(OBJECTS)
 
 install: $(BINARY)
-	install 	src/pifacedigital.h /usr/local/include
+	install 	src/pifacedigitalcpp.h /usr/local/include
 	install $(BINARY) /usr/local/lib
 
-bindings:  src/pifacedigital.h src/pifacedigital.i
+bindings:  src/pifacedigitalcpp.h src/pifacedigital.i
 	mkdir -p bindings/java
 	$(SWIG) -java -outdir bindings/java src/pifacedigital.i
 	mkdir -p bindings/python

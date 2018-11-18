@@ -1,19 +1,36 @@
-libpifacedigital
+libpifacedigitalCpp
 ================
 
-A simple library for controlling
+This is a approach for an C++ adoption of [libpifacedigital](https://github.com/piface/pifacedigital) by Julian Wiche 
+The controll interface which is included in the original (pifacedigital-cmd.c)  is NOT included.
+
+A simple C++ library for controlling
 [PiFace Digital](http://www.piface.org.uk/products/piface_digital/).
 Hides the SPI file descriptors so the user only has to deal with `hw_addr`.
+
 
 Building
 --------
 
 To build the library, first install the required dependency
-[libmcp23s17](https://github.com/piface/libmcp23s17). Then run:
+[libmcp23s17](https://github.com/piface/libmcp23s17). 
+    $ cd  ~
+    $ git clone https://github.com/piface/libmcp23s17
+    $ cd  libmcp23s17
+    $ make 
 
+Install the library to `/usr/local` using: (optional)
+
+    $ make install
+
+    
+Then run:
+    $ cd ~
+    $ git clone https://github.com/dajuly20/libpifacedigitalcpp
+    $ cd libpifacedigitalcpp
     $ make
 
-Install the library to `/usr/local` using:
+Install the library to `/usr/local` using: (optional)
 
     $ make install
 
@@ -22,24 +39,18 @@ To test the library, compile and execute the example program:
     $ make example
     $ ./example
 
-A command line utility named `pifacedigital` is also available. Build with:
-
-    $ make pifacedigital
-    $ ./pifacedigital read input
-    $ ./pifacedigital --help
-
 Usage
 -----
 
-See `example.c` for example usage.
+See `example.cpp` for example usage.
 
-Compile your software with the following flags:
+When you have made install, just compile your software with the following flags:
 
-    -lpifacedigital -lmcp23s17
+    -lpifacedigitalcpp -lmcp23s17
 
-You can specify the path of the libraries manually, using:
+If not, you must specify the path of the libraries manually, using:
 
-    -I/path/to/headers -L/path/to/libpifacedigital -lpifacedigital -L/path/to/mcp23s17 -lmcp23s17
+    -I/path/to/headers -L/path/to/libpifacedigital -lpifacedigitalcpp -L/path/to/mcp23s17 -lmcp23s17
 
 Documentation
 -------------
@@ -53,9 +64,3 @@ Build it with (assuming that you are in the directory of the cloned repository):
 
 To view as HTML, point your browser to `docs/html/index.html`.
 
-To view as PDF:
-
-    $ cd latex/
-    $ make
-
-The pdf is called `refman.pdf`.
