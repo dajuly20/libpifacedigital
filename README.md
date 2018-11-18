@@ -1,7 +1,7 @@
 libpifacedigitalCpp
 ================
 
-This is a approach for an C++ adoption of [libpifacedigital](https://github.com/piface/pifacedigital) by Julian Wiche 
+This is a approach for an C++ adoption of [libpifacedigital](https://github.com/piface/pifacedigital) by Julian Wiche  
 The controll interface which is included in the original (pifacedigital-cmd.c)  is NOT included.
 
 A simple C++ library for controlling
@@ -14,6 +14,7 @@ Building
 
 To build the library, first install the required dependency
 [libmcp23s17](https://github.com/piface/libmcp23s17). 
+
     $ cd  ~
     $ git clone https://github.com/piface/libmcp23s17
     $ cd  libmcp23s17
@@ -25,6 +26,7 @@ Install the library to `/usr/local` using: (optional)
 
     
 Then run:
+
     $ cd ~
     $ git clone https://github.com/dajuly20/libpifacedigitalcpp
     $ cd libpifacedigitalcpp
