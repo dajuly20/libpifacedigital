@@ -44,6 +44,7 @@ public:
     void    write_bit(uint8_t data,uint8_t bit_num, uint8_t reg, uint8_t hw_addr);
     
     uint8_t digital_read(uint8_t pin_num);
+    uint8_t digital_read_inv(uint8_t pin_num);
     void    digital_write(uint8_t pin_num, uint8_t value);
     
     int     wait_for_input(uint8_t *data, int timeout, uint8_t hw_addr);

@@ -31,7 +31,7 @@ int main( int argc, char *argv[] )
      * Reverse the return value of pifacedigital_enable_interrupts() to be consistent
      * with the variable name "interrupts_enabled". (the function returns 0 on success)
      */
-    if (!pfd.interrupts_enabledi())
+    if (pfd.interrupts_enabledi())
         printf("Interrupts enabled.\n");
     else
         printf("Could not enable interrupts. Try running using sudo to enable PiFaceDigital interrupts.\n");

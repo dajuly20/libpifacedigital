@@ -142,6 +142,14 @@ uint8_t PiFaceDigital::digital_read(uint8_t pin_num)
     return read_bit(pin_num, PiFaceDigital::IN, hw_addr);
 }
 
+uint8_t PiFaceDigital::digital_read_inv(uint8_t pin_num)
+{
+    return ~read_bit(pin_num, PiFaceDigital::IN, hw_addr)&1;
+}
+
+
+
+
 void PiFaceDigital::digital_write(uint8_t pin_num, uint8_t value)
 {
     write_bit(value, pin_num, PiFaceDigital::OUT, hw_addr);
