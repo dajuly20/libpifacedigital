@@ -31,7 +31,7 @@ int main( int argc, char *argv[] )
      * Reverse the return value of pifacedigital_enable_interrupts() to be consistent
      * with the variable name "interrupts_enabled". (the function returns 0 on success)
      */
-    if (pfd.interrupts_enabledi())
+    if (pfd.interrupts_enabled())
         printf("Interrupts enabled.\n");
     else
         printf("Could not enable interrupts. Try running using sudo to enable PiFaceDigital interrupts.\n");
@@ -45,32 +45,32 @@ int main( int argc, char *argv[] )
      */
     /* Set all outputs off (00000000) */
     printf("Setting all outputs off\n");
-    pfd.write_reg(0x00, OUTPUT, hw_addr);
+    pfd.write_byte(0x00);
     sleep(1);
 
     /* Set output states to alternating on/off (10101010) */
     printf("Setting outputs to 10101010\n");
-    pfd.write_reg(0xaa, OUTPUT, hw_addr);
+    pfd.write_byte(0xaa);
     sleep(1);
 
     /* Set output states to alternating off/on (01010101) */
     printf("Setting outputs to 01010101\n");
-    pfd.write_reg(0x55, OUTPUT, hw_addr);
+    pfd.write_byte(0x55);
     sleep(1);
 
     /* Set all outputs off (000000) */
     printf("Setting all outputs off\n");
-    pfd.write_reg(0x00, OUTPUT, hw_addr);
+    pfd.write_byte(0x00);
 
 
     /**
      * Read/write single input bits
      */
-    uint8_t bit = pfd.read_bit(0, PiFaceDigital::OUT, hw_addr);
+    uint8_t bit = pfd.read_pin(0);
     printf("Reading bit 0: %d\n", bit);
     sleep(1);
     printf("Writing bit 0 to %d\n", bit);
-    pfd.write_bit(0, 0, PiFaceDigital::OUT, hw_addr);
+    pfd.write_pin(0, 0);
 
 
     /**
@@ -82,7 +82,7 @@ int main( int argc, char *argv[] )
     /**
      * Bulk read all inputs at once
      */
-    inputs = pfd.read_reg(INPUT, hw_addr);
+    inputs = pfd.read_byte(/*IN or OUT*/); 
     printf("Inputs: 0x%x\n", inputs);
 
 
@@ -96,12 +96,12 @@ int main( int argc, char *argv[] )
 
         /* Turn output pin i high */
         printf("Setting output %s %d HIGH\n", desc, (int)i);
-        pfd.digital_write(i, 1);
+        pfd.write_pin(i, 1);
         sleep(1);
 
         /* Turn output pin i low */
         printf("Setting output %s %d LOW\n", desc, (int)i);
-        pfd.digital_write(i, 0);
+        pfd.write_pin(i, 0);
         sleep(1);
     }
 
@@ -111,7 +111,7 @@ int main( int argc, char *argv[] )
      * A return value of 0 is pressed.
      */
     for (i = 0; i < 8; i++) {
-        uint8_t pinState = pfd.digital_read(i);
+        uint8_t pinState = pfd.read_pin(i);
         printf("Input %d value: %d\n", (int)i, (int)pinState);
     }
 
@@ -120,9 +120,9 @@ int main( int argc, char *argv[] )
      * Wait for input change interrupt.
      * pifacedigital_wait_for_input returns a value <= 0 on failure.
      */
-    if (pfd.interrupts_enabledi()) {
+    if (pfd.interrupts_enabled()) {
         printf("Waiting for input (press any button on the PiFaceDigital)\n");
-        if (pfd.wait_for_input(&inputs, -1, hw_addr) > 0)
+        if (pfd.wait_for_input(&inputs, -1) > 0)
             printf("Inputs: 0x%x\n", inputs);
         else
             printf("Can't wait for input. Something went wrong!\n");
