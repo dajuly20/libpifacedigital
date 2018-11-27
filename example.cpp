@@ -106,6 +106,27 @@ int main( int argc, char *argv[] )
     }
 
 
+    printf("Testing cached writing");
+    pfd.caching_enable();
+        /**
+     * Write each output pin individually
+     */
+    for (i = 0; i < 4; i++) {
+        const char *desc;
+        if (i <= 1) desc = "pin with attached relay";
+        else desc = "pin";
+
+        /* Turn output pin i high */
+        printf("Setting output %s %d HIGH\n", desc, (int)i);
+        pfd.write_pin(i, 1);
+        sleep(1);
+        
+       
+    }
+    pfd.flush();
+    pfd.caching_disable();
+    
+    return 0;
     /**
      * Read each input pin individually
      * A return value of 0 is pressed.
