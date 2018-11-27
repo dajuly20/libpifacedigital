@@ -22,3 +22,6 @@ build/
 nbbuild/
 dist/
 nbdist/
+
+#Project specific
+example
