@@ -20,26 +20,40 @@
 
 int PiFaceDigital::_mcp23s17_fd; 
 int PiFaceDigital::pfd_count;
-     
+bool PiFaceDigital::EXITVAL;   
+
 // Standard constructor, using which interrupts are disabled, hw adress 0 will be used.
+//PiFaceDigital::PiFaceDigital() {
+//    PiFaceDigital(0, 0);
+//}
+
 PiFaceDigital::PiFaceDigital() {
-    PiFaceDigital(0, 0);
+    PiFaceDigital(0,0, EXITVAL_ZERO);
 }
 
-PiFaceDigital::PiFaceDigital(int hw_addr, int _interrupts_enabled) {
+PiFaceDigital::PiFaceDigital(int hw_addr = 0, int _interrupts_enabled = 1, bool _EXITVAL = EXITVAL_ZERO ) {
     _hw_addr     =   hw_addr;
     file_handle =   open();
-    
+    PiFaceDigital::EXITVAL = _EXITVAL; 
     // Opening connection
-    _init_success = !open();
+    _init_success = !(file_handle < 0);
     _interrupts_enabled = enable_interrupts();
-    
 }
 
 PiFaceDigital::PiFaceDigital(const PiFaceDigital& orig) {
+    _hw_addr = orig._hw_addr;
+    file_handle = orig.file_handle;
+    _init_success = orig._init_success;
+    _interrupts_enabled = orig._interrupts_enabled;
 }
 
 PiFaceDigital::~PiFaceDigital() {
+    if(PiFaceDigital::EXITVAL == PiFaceDigital::EXITVAL_PERSIST){
+        if(caching_status()) caching_disable();  // Flushes the cache, leaving the device with the last values.
+    }
+    else if(PiFaceDigital::EXITVAL == PiFaceDigital::EXITVAL_ZERO){
+        write_through(0);    // Or set outputs to zero on quit.
+    }
     close();
 }
 
@@ -116,15 +130,19 @@ void PiFaceDigital::close()
 
 uint8_t PiFaceDigital::read_byte(uint8_t reg)
 {
-    if(caching_status()){
+    
+                        // access on interrupt register may not be cached!
+    if(caching_status()  && reg != INTERRUPT){ 
         if(reg == IN){
             return _cached_in;
         }
+        
         else if(reg == OUT){
             return _cached_out;
         }
+       
         else{
-            printf("Error: invalid value for reg.");
+            printf("Error: invalid value for register: %d", (int) reg);
             return -1;
         }
     }
@@ -166,7 +184,22 @@ void PiFaceDigital::flush() {
 
 uint8_t PiFaceDigital::read_through(uint8_t reg)
 {
-    return mcp23s17_read_reg(reg, _hw_addr, _mcp23s17_fd);
+    // If it is an input just reverse all the bits... 
+    // TODO check if that does what it should. 
+    uint8_t data = mcp23s17_read_reg(reg, _hw_addr, _mcp23s17_fd);
+        if(reg == IN || reg == INTERRUPT){
+            uint8_t datainv = ~data;
+            return datainv;
+        }
+        else if(reg == OUT){
+            return data;
+        }
+    
+        else{
+            printf("Warning: unknown value for reg: %d", (int) reg);
+            return -1;
+        }
+ 
 }
 
 uint8_t PiFaceDigital::read_through()
@@ -194,7 +227,7 @@ uint8_t PiFaceDigital::read_bit(uint8_t bit_num, uint8_t reg )
     
 }
 
-void PiFaceDigital::write_bit(uint8_t data,
+void PiFaceDigital::write_bit(bool data,
                              uint8_t bit_num
                              )
 {
@@ -209,14 +242,14 @@ void PiFaceDigital::write_bit(uint8_t data,
 
 
 
-void PiFaceDigital::write_pin(uint8_t data, uint8_t bit_num){
+void PiFaceDigital::write_pin(bool data, uint8_t bit_num){
     return this->write_bit(data, bit_num);
 }
 
 uint8_t PiFaceDigital::read_pin(uint8_t pin_num,  int direction)
 {
     if(direction == IN){
-        return ~this->read_bit(pin_num, direction) & 1;
+        return this->read_bit(pin_num, direction) & 1;
     }
     else if(direction == OUT){        
          return this->read_bit(pin_num, direction);
@@ -249,13 +282,13 @@ int PiFaceDigital::wait_for_input(uint8_t *data,
                                  int timeout)
 {
     // Flush any pending interrupts prior to wait
-    read_byte(0x11);
+    read_byte(INTERRUPT);
 
     // Wait for input state change
     int ret = mcp23s17_wait_for_interrupt(timeout);
 
     // Read & return input register, thus clearing interrupt
-    *data = read_byte(0x11);
+    *data = read_byte(INTERRUPT);
     return ret;
 }
 

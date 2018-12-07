@@ -36,13 +36,16 @@ $(BINARY): $(OBJECTS)
     endif
 
 .cpp.o:
-	$(CC) $(INCFLAGS) $(CFLAGS) -fPIC $< -o $@
+	$(CC) $(INCFLAGS) $(CFLAGS) -fPIC $< -g -o $@
 
 distclean: clean
 	rm -f $(BINARY)
 
 example: example.cpp
-	g++ -o example example.cpp -x c++ -Isrc/ -L. -lpifacedigitalcpp -L../libmcp23s17/ -lmcp23s17  
+	g++ -o example example.cpp -x c++ -Isrc/ -L. -lpifacedigitalcpp -L../libmcp23s17/ -lmcp23s17 -g
+
+#pifacedigital: util/pifacedigital-cmd.c
+#	gcc -o pifacedigital util/pifacedigital-cmd.c -Isrc/ -I../libmcp23s17/src/ -L. -lpifacedigital -L../libmcp23s17/ -lmcp23s17
 
 clean:
 	rm -f $(OBJECTS)

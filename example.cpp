@@ -22,9 +22,14 @@ int main( int argc, char *argv[] )
     }
     
     // Create Instance of pfd
-    PiFaceDigital pfd(hw_addr, enable_interrupts);
-    
-
+    PiFaceDigital pfd(hw_addr, enable_interrupts, PiFaceDigital::EXITVAL_ZERO);
+   // PiFaceDigital::EXITVAL = PiFaceDigital::EXITVAL_ZERO;
+   
+    if(!pfd.init_success()){
+        printf("Error: Could not open PiFaceDigital\n");
+        printf("Is the device properly attached? \n"); 
+        return -1;
+    }
 
     /**
      * Enable interrupt processing (only required for all blocking/interrupt methods).
@@ -96,17 +101,17 @@ int main( int argc, char *argv[] )
 
         /* Turn output pin i high */
         printf("Setting output %s %d HIGH\n", desc, (int)i);
-        pfd.write_pin(i, 1);
+        pfd.write_pin(1, i);
         sleep(1);
 
         /* Turn output pin i low */
         printf("Setting output %s %d LOW\n", desc, (int)i);
-        pfd.write_pin(i, 0);
+        pfd.write_pin(0, i);
         sleep(1);
     }
 
 
-    printf("Testing cached writing");
+    printf("Testing cached writing\n");
     pfd.caching_enable();
         /**
      * Write each output pin individually
@@ -118,15 +123,16 @@ int main( int argc, char *argv[] )
 
         /* Turn output pin i high */
         printf("Setting output %s %d HIGH\n", desc, (int)i);
-        pfd.write_pin(i, 1);
+        pfd.write_pin(1, i);
         sleep(1);
         
        
     }
     pfd.flush();
     pfd.caching_disable();
+    sleep(1);
     
-    return 0;
+    
     /**
      * Read each input pin individually
      * A return value of 0 is pressed.
