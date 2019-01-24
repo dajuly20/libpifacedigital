@@ -54,7 +54,7 @@ PiFaceDigital::~PiFaceDigital() {
     else if(PiFaceDigital::EXITVAL == PiFaceDigital::EXITVAL_ZERO){
         write_through(0);    // Or set outputs to zero on quit.
     }
-    close();
+    doclose();
 }
 
 
@@ -105,9 +105,8 @@ int PiFaceDigital::open(){
     return _mcp23s17_fd; // returns the fd, for advanced users.
 }
 
-void PiFaceDigital::close()
+void PiFaceDigital::doclose()
 {
-    fprintf(stderr, "Close called");
     if (pfd_count <= 0)
         return;
 
@@ -124,7 +123,7 @@ void PiFaceDigital::close()
     // if no more PiFace Digital's, close the fd
     if (pfd_count <= 0) {
         pfd_count = 0;
-        close();
+        close(_mcp23s17_fd);
     }
 }
 
