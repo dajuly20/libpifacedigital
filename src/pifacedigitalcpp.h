@@ -72,7 +72,7 @@ private:
     static const int bus = 0, chip_select = 0;
     int open();
     int open_noinit(uint8_t hw_addr);
-    void close();
+    void doclose();
     int enable_interrupts();
     int disable_interrupts();
 
