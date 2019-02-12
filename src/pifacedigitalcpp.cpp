@@ -231,20 +231,37 @@ void PiFaceDigital::write_bit(bool data,
                              uint8_t bit_num
                              )
 {
-    uint8_t reg_data = read_byte(OUT);
+write_bit(data, bit_num, OUT);
+}
+
+
+void PiFaceDigital::write_bit(bool data,
+                             uint8_t bit_num,
+                             int direction)
+{
+    uint8_t reg_data = read_byte(direction);
       if (data) {
         reg_data |= 1 << bit_num; // set
     } else {
         reg_data &= 0xff ^ (1 << bit_num); // clear
     }
-    write_byte(reg_data, OUT);
+    write_byte(reg_data, direction);
 }
 
+
+
+
+void PiFaceDigital::write_pin(bool data, uint8_t bit_num, int direction){
+    return this->write_bit(data, bit_num, direction);
+}
 
 
 void PiFaceDigital::write_pin(bool data, uint8_t bit_num){
-    return this->write_bit(data, bit_num);
+    return this->write_pin(data, bit_num, OUT);
 }
+
+
+
 
 uint8_t PiFaceDigital::read_pin(uint8_t pin_num,  int direction)
 {

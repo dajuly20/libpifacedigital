@@ -44,7 +44,7 @@ public:
     uint8_t read_pin(uint8_t pin_num, int direction);
     uint8_t read_pin(uint8_t pin_num);
     void write_pin(bool data, uint8_t bit_num);
-   
+    void write_pin(bool data, uint8_t bit_num, int direction);
     int     wait_for_input(uint8_t *data, int timeout);
     // implicitly 0 initiallised. static = same on all instances.
    
@@ -88,7 +88,8 @@ void    write_through(uint8_t data, uint8_t reg);
 
     uint8_t read_bit(uint8_t bit_num, uint8_t reg);
     void    write_bit(bool data,uint8_t bit_num);
-        
+    void    write_bit(bool data,uint8_t bit_num, int direction);
+
     int file_handle;
     uint8_t inputs;         /**< Input bits (pins 0-7) */
     int _hw_addr = 0;        /**< PiFaceDigital hardware address  */
